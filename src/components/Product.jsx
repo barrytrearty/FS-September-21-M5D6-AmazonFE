@@ -10,10 +10,12 @@ import {
   Modal,
 } from "react-bootstrap";
 import { withRouter } from "react-router";
+// import "./styles.css";
 // import uniqid from "uniqid";
 
 const Product = ({ match }) => {
   const { id } = match.params;
+  const userId = 1;
 
   const [product, setProduct] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -28,10 +30,11 @@ const Product = ({ match }) => {
 
   const fetchProduct = async (id) => {
     try {
-      let response = await fetch(`http://localhost:3003/products/${id}`);
+      let response = await fetch(`http://localhost:5000/products/${id}`);
       let productObj = await response.json();
       setProduct(productObj);
       setLoading(false);
+      console.log(productObj);
     } catch (error) {
       console.log(error);
     }
@@ -44,7 +47,7 @@ const Product = ({ match }) => {
     const uploadPhoto = async (id) => {
       try {
         let response = await fetch(
-          `http://localhost:3003/products/${id}/uploadimage`,
+          `http://localhost:5000/products/${id}/cloudinaryUpload`,
           {
             method: "PUT",
             body: fileFormData,
@@ -62,7 +65,7 @@ const Product = ({ match }) => {
   const fetchReviews = async (id) => {
     try {
       let response = await fetch(
-        `http://localhost:3003/products/${id}/reviews`
+        `http://localhost:5000/products/${id}/reviews`
       );
       let fetchedReviews = await response.json();
       setReviews(fetchedReviews);
@@ -76,13 +79,35 @@ const Product = ({ match }) => {
     e.preventDefault(e);
     console.log(newReview);
     try {
-      let response = await fetch(`http://localhost:3003/reviews`, {
+      let response = await fetch(`http://localhost:5000/reviews`, {
         method: "POST",
         body: JSON.stringify(newReview),
         headers: {
           "Content-Type": "application/json",
         },
       });
+      if (response.ok) {
+        console.log(await response.json());
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const addToCart = async () => {
+    // e.preventDefault(e);
+    const cartItemObj = { userId: 1, productId: id };
+    try {
+      let response = await fetch(
+        `http://localhost:5000/users/${userId}/addProduct`,
+        {
+          method: "POST",
+          body: JSON.stringify(cartItemObj),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
       if (response.ok) {
         console.log(await response.json());
       }
@@ -107,11 +132,13 @@ const Product = ({ match }) => {
           <Col className="col-9">
             <Image
               className="product-details-cover"
-              src={product.imageUrl}
+              src={product.image_url}
               fluid
             />
             <h1 className="product-details-title">{product.name}</h1>
-            <h4 className="product-details-title">{product.brand}</h4>
+            <h4 className="product-details-title">
+              {/* {product.categories[0].name} */}
+            </h4>
 
             <div className="product-details-container">
               <div className="product-details-author">
@@ -131,6 +158,15 @@ const Product = ({ match }) => {
             >
               {" "}
               Upload Cover
+            </Button>
+            <Button
+              onClick={() => addToCart()}
+              size="lg"
+              variant="dark"
+              style={{ margin: "1em" }}
+            >
+              {" "}
+              Add to Cart
             </Button>
           </Col>
           <Col className="col-3">
