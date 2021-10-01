@@ -8,16 +8,27 @@ const Home = () => {
   const [productsArray, setProductsArray] = useState([]);
   const [offsetValue, setOffsetValue] = useState(0);
   const [categoriesArray, setCategoriesArray] = useState([]);
+  const [categoryValue, setCategoryValue] = useState(null);
 
   const fetchProducts = async () => {
     try {
-      let response = await fetch(
-        `http://localhost:5000/products?offset=${offsetValue}`
-      );
-      let products = await response.json();
-      setProductsArray(products);
-      setLoading(false);
-      return products;
+      if (categoryValue) {
+        let response = await fetch(
+          `http://localhost:5000/categories/${categoryValue}`
+        );
+        let categoryProducts = await response.json();
+        setProductsArray(categoryProducts.products);
+        setLoading(false);
+        return categoryProducts;
+      } else {
+        let response = await fetch(
+          `http://localhost:5000/products?offset=${offsetValue}`
+        );
+        let products = await response.json();
+        setProductsArray(products);
+        setLoading(false);
+        return products;
+      }
     } catch (error) {
       console.log(error);
     }
@@ -34,22 +45,30 @@ const Home = () => {
       console.log(error);
     }
   };
+
   useEffect(() => {
     fetchCategories();
     console.log(categoriesArray);
   }, []);
+
   useEffect(() => {
     console.log(offsetValue);
     fetchProducts();
-  }, [offsetValue]);
+  }, [offsetValue, categoryValue]);
 
   return (
     <Container fluid="sm">
       <h1 className="blog-main-title">Welcome to Amazon</h1>
       <Row>
-        {categoriesArray.map((category) => {
-          <Button>{category.name}</Button>;
-        })}
+        {categoriesArray.map((category) => (
+          <Button
+            variant="light"
+            className="mx-1"
+            onClick={() => setCategoryValue(category.id)}
+          >
+            {category.name}
+          </Button>
+        ))}
       </Row>
       <Row>
         {productsArray.map((product) => (
@@ -58,9 +77,7 @@ const Home = () => {
               <Card>
                 <Card.Img variant="top" src={product.image_url} />
                 <Card.Body>
-                  <Card.Title>
-                    {product.name.toUpperCase()} {product.name}
-                  </Card.Title>
+                  <Card.Title>{product.name.toUpperCase()}</Card.Title>
                   {/* <p>{product.categories[0].name}</p> */}
                   {/* <p>{product.reviews[0]}.text</p> */}
                 </Card.Body>

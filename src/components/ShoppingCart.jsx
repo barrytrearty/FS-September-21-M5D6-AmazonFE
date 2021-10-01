@@ -17,9 +17,9 @@ const ShoppingCart = () => {
 
   const fetchCartItems = async (id) => {
     try {
-      let response = await fetch(`http://localhost:5000/users/${id}`);
+      let response = await fetch(`http://localhost:5000/shoppingCart/${id}`);
       let fetchedCartItems = await response.json();
-      setCartItems(fetchedCartItems.products);
+      setCartItems(fetchedCartItems);
       setLoading(false);
       console.log(fetchedCartItems);
       console.log(cartItems);
@@ -38,7 +38,7 @@ const ShoppingCart = () => {
 
       {cartItems.map((item) => (
         <Row className="border p-2">
-          <Col>{item.name}</Col> <Col>{item.price}</Col>{" "}
+          <Col>{item.product.name}</Col> <Col>{item.product.price}</Col>{" "}
           <Button variant="danger"></Button>
         </Row>
       ))}
