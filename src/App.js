@@ -13,7 +13,7 @@ function App() {
       <NavBar />
       {/* <Route path="/" exact component={Home} /> */}
       <Route path="/" exact component={Home} />
-      <Route path="/product/:id" exact component={Product} />
+      <Route path="/products/:id" exact component={Product} />
       <Route path="/newproduct" exact component={NewProduct} />
       <Route path="/shoppingCart" exact component={ShoppingCart} />
       {/* <Footer /> */}

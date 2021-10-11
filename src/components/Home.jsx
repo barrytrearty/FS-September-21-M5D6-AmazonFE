@@ -7,6 +7,7 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [productsArray, setProductsArray] = useState([]);
   const [offsetValue, setOffsetValue] = useState(0);
+  const [limitValue, setLimitValue] = useState(5);
   const [categoriesArray, setCategoriesArray] = useState([]);
   const [categoryValue, setCategoryValue] = useState(null);
 
@@ -22,10 +23,10 @@ const Home = () => {
         return categoryProducts;
       } else {
         let response = await fetch(
-          `http://localhost:5000/products?offset=${offsetValue}`
+          `http://localhost:5000/products?offset=${offsetValue}&limit=${limitValue}`
         );
         let products = await response.json();
-        setProductsArray(products);
+        setProductsArray(products.products);
         setLoading(false);
         return products;
       }
@@ -73,7 +74,7 @@ const Home = () => {
       <Row>
         {productsArray.map((product) => (
           <Col md={4} style={{ marginBottom: 50 }}>
-            <Link to={`/product/${product.id}`}>
+            <Link to={`/products/${product._id}`}>
               <Card>
                 <Card.Img variant="top" src={product.image_url} />
                 <Card.Body>
@@ -93,9 +94,9 @@ const Home = () => {
             if (offsetValue > 0) setOffsetValue(offsetValue - 5);
           }}
         >
-          [1]
+          Prev
         </Button>
-        <Button onClick={() => setOffsetValue(offsetValue + 5)}>[2]</Button>
+        <Button onClick={() => setOffsetValue(offsetValue + 5)}>Next</Button>
       </div>
     </Container>
   );
